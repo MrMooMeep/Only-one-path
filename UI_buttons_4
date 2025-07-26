@@ -1,0 +1,114 @@
+import pygame
+import sys
+
+# ---------- Constants for layout ----------
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
+
+# Message Box
+MSG_BOX_X = 20
+MSG_BOX_Y = 300
+MSG_BOX_WIDTH = 300
+MSG_BOX_HEIGHT = 120
+
+# Buttons layout
+BUTTON_WIDTH = 120
+BUTTON_HEIGHT = 50
+BUTTON_GAP_X = 10
+BUTTON_GAP_Y = 10
+
+BUTTON_ROW1_Y = 310
+BUTTON_ROW2_Y = 370
+BUTTON_COL1_X = 340
+BUTTON_COL2_X = BUTTON_COL1_X + BUTTON_WIDTH + BUTTON_GAP_X
+
+# ---------- Gradient Helper ----------
+def draw_rounded_vertical_gradient(surface, rect, color_top, color_bottom, radius):
+    x, y, w, h = rect
+    gradient_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+
+    for i in range(h):
+        ratio = i / h
+        r = int(color_top[0] * (1 - ratio) + color_bottom[0] * ratio)
+        g = int(color_top[1] * (1 - ratio) + color_bottom[1] * ratio)
+        b = int(color_top[2] * (1 - ratio) + color_bottom[2] * ratio)
+        pygame.draw.line(gradient_surface, (r, g, b), (0, i), (w, i))
+
+    # Rounded rectangle mask
+    rounded_rect = pygame.Surface((w, h), pygame.SRCALPHA)
+    pygame.draw.rect(rounded_rect, (255, 255, 255), (0, 0, w, h), border_radius=radius)
+    gradient_surface.blit(rounded_rect, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+    surface.blit(gradient_surface, (x, y))
+
+# ---------- UIButton Class ----------
+class UIButton:
+    def __init__(self, text, pos, size, color_top, color_bottom, text_color, font):
+        self.text = text
+        self.pos = pos
+        self.size = size
+        self.color_top = color_top
+        self.color_bottom = color_bottom
+        self.text_color = text_color
+        self.font = font
+        self.rect = pygame.Rect(pos, size)
+
+    def draw(self, surface, mouse_pos):
+        draw_rounded_vertical_gradient(surface, self.rect, self.color_top, self.color_bottom, radius=10)
+        pygame.draw.rect(surface, (0, 0, 0), self.rect, 2, border_radius=10)
+
+        text_surf = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
+
+    def is_clicked(self, event):
+        return event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.rect.collidepoint(event.pos)
+
+# ---------- Main Program ----------
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Pokémon Battle UI - Tunable Layout")
+
+font = pygame.font.SysFont("arial", 24)
+
+# Create buttons using layout constants
+buttons = [
+    UIButton("FIGHT", (BUTTON_COL1_X, BUTTON_ROW1_Y), (BUTTON_WIDTH, BUTTON_HEIGHT),
+             (255, 80, 80), (180, 30, 30), (0, 0, 0), font),
+    UIButton("BAG", (BUTTON_COL2_X, BUTTON_ROW1_Y), (BUTTON_WIDTH, BUTTON_HEIGHT),
+             (255, 220, 120), (200, 150, 0), (0, 0, 0), font),
+    UIButton("POKéMON", (BUTTON_COL1_X, BUTTON_ROW2_Y), (BUTTON_WIDTH, BUTTON_HEIGHT),
+             (120, 255, 120), (30, 180, 30), (0, 0, 0), font),
+    UIButton("RUN", (BUTTON_COL2_X, BUTTON_ROW2_Y), (BUTTON_WIDTH, BUTTON_HEIGHT),
+             (180, 180, 255), (80, 80, 200), (0, 0, 0), font),
+]
+
+running = True
+while running:
+    screen.fill((240, 240, 240))
+    mouse_pos = pygame.mouse.get_pos()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        for button in buttons:
+            if button.is_clicked(event):
+                print(f"You clicked: {button.text}")
+
+    # Draw message box
+    msg_box_rect = pygame.Rect(MSG_BOX_X, MSG_BOX_Y, MSG_BOX_WIDTH, MSG_BOX_HEIGHT)
+    draw_rounded_vertical_gradient(screen, msg_box_rect, (220, 220, 220), (180, 180, 180), radius=10)
+    pygame.draw.rect(screen, (0, 0, 0), msg_box_rect, 2, border_radius=10)
+
+    # Message box text
+    question_text = font.render("What will you do?", True, (0, 0, 0))
+    screen.blit(question_text, (MSG_BOX_X + 20, MSG_BOX_Y + 30))
+
+    # Draw buttons
+    for button in buttons:
+        button.draw(screen, mouse_pos)
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()
