@@ -1,0 +1,76 @@
+import pygame
+import sys
+
+# Define a basic UIButton class
+class UIButton:
+    def __init__(self, text, pos, size, bg_color, text_color, font, hover_color=None):
+        self.text = text
+        self.pos = pos
+        self.size = size
+        self.bg_color = bg_color
+        self.hover_color = hover_color if hover_color else bg_color
+        self.text_color = text_color
+        self.font = font
+        self.rect = pygame.Rect(pos, size)
+
+    def draw(self, surface, mouse_pos):
+        is_hovered = self.rect.collidepoint(mouse_pos)
+        color = self.hover_color if is_hovered else self.bg_color
+
+        pygame.draw.rect(surface, color, self.rect, border_radius=5)
+        pygame.draw.rect(surface, (0, 0, 0), self.rect, 2, border_radius=5)
+
+        text_surf = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
+
+    def is_clicked(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                return True
+        return False
+
+# Initialize pygame
+pygame.init()
+screen = pygame.display.set_mode((640, 480))
+pygame.display.set_caption("Pokémon Battle UI")
+
+# Load font
+font = pygame.font.SysFont("arial", 24)
+
+# Create buttons
+buttons = [
+    UIButton("FIGHT", (340, 310), (120, 50), (255, 100, 100), (0, 0, 0), font),
+    UIButton("BAG", (470, 310), (120, 50), (255, 200, 100), (0, 0, 0), font),
+    UIButton("POKéMON", (340, 370), (120, 50), (170, 255, 170), (0, 0, 0), font),
+    UIButton("RUN", (470, 370), (120, 50), (180, 180, 255), (0, 0, 0), font),
+]
+
+# Basic UI loop
+running = True
+while running:
+    screen.fill((240, 240, 240))  # Light background
+
+    # Draw textbox for "What will you do?"
+    pygame.draw.rect(screen, (200, 200, 200), (20, 300, 300, 120))
+    pygame.draw.rect(screen, (0, 0, 0), (20, 300, 300, 120), 2)
+    question_text = font.render("What will you do?", True, (0, 0, 0))
+    screen.blit(question_text, (40, 330))
+
+    mouse_pos = pygame.mouse.get_pos()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        for button in buttons:
+            if button.is_clicked(event):
+                print(f"You clicked: {button.text}")
+
+    # Draw buttons
+    for button in buttons:
+        button.draw(screen, mouse_pos)
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()
