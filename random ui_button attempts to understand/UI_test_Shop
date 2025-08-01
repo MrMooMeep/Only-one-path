@@ -1,0 +1,60 @@
+import pygame
+import sys
+from ui import TextBox, Button, WHITE, UI_BG, GOLD
+
+# Setup
+pygame.init()
+WIDTH, HEIGHT = 1000, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+FPS = 60
+
+# Dialogue box
+dialogue_box = TextBox(300, 400, 660, 160, "Welcome to the adventure. Choose a scene to begin.")
+
+# Scene Buttons
+scene_buttons = []
+for i in range(8):
+    def make_callback(index=i + 1):
+        return lambda: dialogue_box.setText(f"Scene {i + 1} activated!")
+
+    btn = Button(20, 20 + i * 60, 100, 40, f"S{i +1}", action=make_callback())
+    scene_buttons.append(btn)
+
+# Bottom Buttons (Icons)
+bottom_buttons = []
+icon_texts = ["🗺️", "💬", "📜", "➡️"]
+for i, icon in enumerate(icon_texts):
+    btn = Button(280 + i * 120, 570, 100, 40, icon)
+    bottom_buttons.append(btn)
+
+# Main loop
+running = True
+while running:
+    dt = clock.tick(FPS) / 1000
+    screen.fill((10, 10, 30))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        for btn in scene_buttons + bottom_buttons:
+            btn.handle_event(event)
+
+    for btn in scene_buttons + bottom_buttons:
+        btn.update(dt)
+        btn.draw(screen)
+
+    # Draw character placeholder
+    pygame.draw.circle(screen, WHITE, (630, 200), 80, 4)  # head
+    pygame.draw.line(screen, WHITE, (630, 280), (630, 380), 4)  # body
+    pygame.draw.line(screen, WHITE, (630, 300), (580, 250), 4)  # left arm
+    pygame.draw.line(screen, WHITE, (630, 300), (680, 250), 4)  # right arm
+
+    # Update and draw dialogue
+    dialogue_box.update(dt)
+    dialogue_box.draw(screen)
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()

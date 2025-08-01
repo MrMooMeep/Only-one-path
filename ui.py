@@ -199,135 +199,59 @@ class TextBox:
                             (cursor_x, cursor_y), 
                             (cursor_x, cursor_y + self.line_height - 5), 2)
             
+import pygame
+
 class Button:
-    def __init__(self, x, y, width, height, text, action=None, borderColor=GOLD):
+    def __init__(self, x, y, width, height, text, action=None,
+                 color=(20, 20, 40), hover_color=(40, 40, 80),
+                 click_color=(60, 60, 100), text_color=(255, 255, 255),
+                 border_color=(255, 215, 0), font=None):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.action = action
-        self.color = (20, 20, 40, 200)  # Dark blue with transparency
-        self.hoverColor = (40, 40, 80, 230)
-        self.clickColor = (60, 60, 100, 255)
-        self.isHovered = False
-        self.isClicked = False
-        self.borderColor = borderColor
-        self.icon = None
-        self.icon_padding = 10
-        self.animation_value = 0
-        self.pulse_speed = 2
-        self.border_radius = int(min(width, height) // 3)  # Rounded corners radius
-        
-    def set_icon(self, icon_surface):
-        """Set an icon to display next to the button text"""
-        self.icon = icon_surface
-        
-    def update(self, dt):
-        # Update hover animation
-        if self.isHovered:
-            self.animation_value = min(1.0, self.animation_value + dt * self.pulse_speed)
-        else:
-            self.animation_value = max(0.0, self.animation_value - dt * self.pulse_speed)
-        
-    def draw(self, surface):
-        # Determine button state and colors
-        if self.isClicked:
-            color = self.clickColor
-            border_color = WHITE
-            text_color = WHITE
-            offset = 1  # Push button down slightly when clicked
-        elif self.isHovered:
-            # Calculate glow effect based on animation
-            glow = int(20 * math.sin(pygame.time.get_ticks() * 0.005) * self.animation_value)
-            color = self.hoverColor
-            border_color = (min(255, self.borderColor[0] + glow),
-                           min(255, self.borderColor[1] + glow),
-                           min(255, self.borderColor[2] + glow))
-            text_color = WHITE
-            offset = 0
-        else:
-            color = self.color
-            border_color = self.borderColor
-            text_color = LIGHT_GRAY
-            offset = 0
-            
-        # Draw button background with rounded corners
-        button_surface = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
-        button_surface.fill((0, 0, 0, 0))  # Transparent background
-        
-        # Draw curved button background with gradient
-        button_rect = pygame.Rect(0, 0, self.rect.width, self.rect.height)
-        for i in range(self.rect.height):
-            alpha = color[3]
-            shade = 1.0 - (i / self.rect.height * 0.4)  # Gradient factor
-            gradient_color = (int(color[0] * shade), int(color[1] * shade), 
-                             int(color[2] * shade), alpha)
-            
-            # Draw a line considering the rounded corners
-            y_pos = i
-            if y_pos < self.border_radius:
-                # Top curved part
-                x_offset = self.border_radius - int(math.sqrt(self.border_radius**2 - (self.border_radius - y_pos)**2))
-                pygame.draw.line(button_surface, gradient_color, 
-                                (x_offset, y_pos), (self.rect.width - x_offset, y_pos))
-            elif y_pos >= self.rect.height - self.border_radius:
-                # Bottom curved part
-                y_from_bottom = self.rect.height - y_pos - 1
-                x_offset = self.border_radius - int(math.sqrt(self.border_radius**2 - (self.border_radius - y_from_bottom)**2))
-                pygame.draw.line(button_surface, gradient_color, 
-                                (x_offset, y_pos), (self.rect.width - x_offset, y_pos))
-            else:
-                # Middle straight part
-                pygame.draw.line(button_surface, gradient_color, 
-                                (0, y_pos), (self.rect.width, y_pos))
-                            
-        # Apply the button surface
-        surface.blit(button_surface, (self.rect.x, self.rect.y + offset))
-        
-        # Draw rounded borders with style - using pygame.draw.rect with border_radius
-        pygame.draw.rect(surface, border_color, 
-                        pygame.Rect(self.rect.x, self.rect.y + offset, 
-                                   self.rect.width, self.rect.height), 
-                        2, border_radius=self.border_radius)
-        
-        # Create text with shadow
-        text_surf = BUTTON_FONT.render(self.text, True, text_color)
-        shadow_surf = BUTTON_FONT.render(self.text, True, (30, 30, 30))
-        
-        # Calculate positions
-        if self.icon:
-            icon_width = self.icon.get_width()
-            total_width = icon_width + self.icon_padding + text_surf.get_width()
-            icon_x = self.rect.centerx - total_width // 2
-            text_x = icon_x + icon_width + self.icon_padding
-            
-            # Blit shadow and text
-            surface.blit(shadow_surf, (text_x + 2, self.rect.centery - text_surf.get_height()//2 + 2 + offset))
-            surface.blit(text_surf, (text_x, self.rect.centery - text_surf.get_height()//2 + offset))
-            
-            # Blit icon
-            surface.blit(self.icon, (icon_x, self.rect.centery - self.icon.get_height()//2 + offset))
-        else:
-            # Center text if no icon
-            text_rect = text_surf.get_rect(center=self.rect.center)
-            shadow_rect = shadow_surf.get_rect(center=(self.rect.centerx + 2, self.rect.centery + 2 + offset))
-            
-            # Blit shadow and text
-            surface.blit(shadow_surf, shadow_rect)
-            surface.blit(text_surf, (text_rect.x, text_rect.y + offset))
+        self.color = color
+        self.hover_color = hover_color
+        self.click_color = click_color
+        self.text_color = text_color
+        self.border_color = border_color
+        self.font = font or pygame.font.Font(None, 36)
+        self.is_hovered = False
+        self.is_clicked = False
+        self.border_radius = int(min(width, height) // 3)
+
+    def update(self, mouse_pos):
+        self.is_hovered = self.rect.collidepoint((mouse_pos[0],mouse_pos[1])) # 0 accesses the 1st pt and 1 accesses the 2nd pt
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEMOTION:
-            self.isHovered = self.rect.collidepoint(event.pos)
-        
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self.rect.collidepoint(event.pos):
-                self.isClicked = True
-                
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.is_hovered:
+                self.is_clicked = True
         elif event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                if self.isClicked and self.rect.collidepoint(event.pos):
-                    if self.action:
-                        self.action()
-                self.isClicked = False
+            if self.is_clicked and self.is_hovered:
+                if self.action:
+                    self.action()
+            self.is_clicked = False
+
+    def draw(self, surface):
+        # Choose color
+        if self.is_clicked:
+            bg_color = self.click_color
+        elif self.is_hovered:
+            bg_color = self.hover_color
+        else:
+            bg_color = self.color
+
+        # Draw background
+        pygame.draw.rect(surface, bg_color, self.rect, border_radius=self.border_radius)
+
+        # Draw border
+        pygame.draw.rect(surface, self.border_color, self.rect, 2, border_radius=self.border_radius)
+
+        # Render text
+        text_surf = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
+
 class Text:
     def __init__(self, x, y, width, height, text, font=TEXT_FONT, color=WHITE, shadow=True):
         self.rect = pygame.Rect(x, y, width, height)
