@@ -6,6 +6,7 @@ class Player:
         self.HP = HP
         self.MAX_HP = HP # gets this info once and stays constant unless changed
         self.SP = SP
+        self.MAX_SP = SP
         self.ATK = ATK
         self.DEF = DEF
         self.GOLD = GOLD
