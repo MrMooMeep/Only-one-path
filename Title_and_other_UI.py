@@ -33,13 +33,14 @@ Shop_UI = {
     # 'atk' : Button(x=((swidth//2)-(190/2)), y=(sheight//2)+(60), width=190,height=50, text='Atk', action=upgrade_action(Shop_UI["atk_indicator"])),
     # 'def' : Button(x=((swidth//2)-(260/2)), y=(sheight//2)+(60), width=190,height=50, text='Def',action=upgrade_action()) #needs to know what Upgrade_action is (make sure the code is above the cmd so it could be used)
     # 'potion' : # later
+    'back' : Button(x=((swidth//2)+(750/2)), y=(sheight//2)+(290), width=190,height=100, text='back', )
 
     
 }
 
-atk_button = Button(x=((swidth//2)-(190/2)), y=(sheight//2)+(290), width=190,height=100, text='Atk', action=upgrade_action(Shop_UI['atk_indicator']))
+atk_button = Button(x=((swidth//2)-(190/2)), y=(sheight//2)+(290), width=190,height=100, text='Atk', action=upgrade_action(Shop_UI['atk_indicator'])) #requires to reference Shop_UI, but if in Sho_Ui while being made, cannot implemnt when not complete
 def_button = Button(x=((swidth//2)+(300/2)), y=(sheight//2)+(290), width=190,height=100, text='Def',action=upgrade_action(Shop_UI['def_indicator']))
-Shop_UI["atk"] = atk_button
+Shop_UI["atk"] = atk_button #reimplement atk
 Shop_UI["def"] = def_button
 
 # front_text = Text(x=(swidth//2)-(280//2), y=(sheight//2)-(150), width=280, height=50, text='One way out', font=fantasy_fonts) #doing - numbers to bring the height up bc (0,0) in top left
@@ -48,3 +49,5 @@ Shop_UI["def"] = def_button
 #                        # // cuts off decimal points and never rounds
 # settings_button = Button(x=((swidth//2)-(190/2)), y=(sheight//2)+(60), width=190,height=50, text='Settings') # y is adding because 0,0 starts at the top left
 # exit_button = Button(x=((swidth//2)-(190/2)), y=(sheight//2)+(120), width=190,height=50, text='Exit')
+
+
