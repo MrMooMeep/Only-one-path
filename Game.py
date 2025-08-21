@@ -31,9 +31,9 @@ class game:
 
         if unit == 'player':
             bar_width = 450
-            bar_height = 40
+            bar_height = 30
 
-            HP_bar_position = (0,((sheight//2)+275))
+            HP_bar_position = (0,((sheight//2)+170))
             pygame.draw.rect(self.screen, (100,100,100),(HP_bar_position[0],HP_bar_position[1],bar_width,bar_height),2)
 
             hp_ratio =  self.player.HP/self.player.MAX_HP
@@ -42,7 +42,7 @@ class game:
             pygame.draw.rect(self.screen, hp_color,(HP_bar_position[0],HP_bar_position[1],bar_width*hp_ratio,bar_height))
             
 
-            SP_bar_position = (swidth-bar_width,((sheight//2)+275))
+            SP_bar_position = (swidth-bar_width,((sheight//2)+170))
             pygame.draw.rect(self.screen, (100,100,100),(SP_bar_position[0],SP_bar_position[1],bar_width,bar_height),2)
 
             sp_ratio =  self.player.SP/self.player.MAX_SP
@@ -53,7 +53,7 @@ class game:
             unit_bar_width = 100
             unit_bar_height = 10
 
-            unit_HP_position = ((self.enemy.x-(50)),(self.enemy.y-(30)))
+            unit_HP_position = ((self.enemy.x-(50)),(self.enemy.y-(150)))
             pygame.draw.rect(self.screen,(100,100,100),(unit_HP_position[0],unit_HP_position[1],unit_bar_width,unit_bar_height))
             # where its going, what the background color, where its gonna go ([x],[y] is 0, 1 bc it starts at 0 first), (width,height)
             unit_hp_ratio = self.enemy.HP/self.enemy.MAX_HP
