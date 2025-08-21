@@ -43,6 +43,22 @@ def_button = Button(x=((swidth//2)+(300/2)), y=(sheight//2)+(290), width=190,hei
 Shop_UI["atk"] = atk_button #reimplement atk
 Shop_UI["def"] = def_button
 
+button_x = (swidth//2)-(850/2)
+
+Battle_UI = {
+    'background_fill' : TextBox(x=0, y=(sheight)-(250), width=swidth, height=250, borderColor=(43, 44, 58, 160)),
+    'dialogue_text' : TextBox(x=(swidth//2)-(10), y=(sheight)-(235), width=600, height=220, borderColor=(43, 44, 58, 160)),
+    'atk_button' : Button(x=(button_x), y=(sheight//2)+(225), width=250,height=50, text='Attack', action=""),
+    'special_button' : Button(x=(button_x), y=(sheight//2)+(295), width=250,height=50, text='Special', action=""),
+    'def_button' : Button(x=(button_x), y=(sheight//2)+(365), width=250,height=50, text='Defend', action="")
+    
+    
+    # 'item_button' :
+
+}
+
+
+
 # front_text = Text(x=(swidth//2)-(280//2), y=(sheight//2)-(150), width=280, height=50, text='One way out', font=fantasy_fonts) #doing - numbers to bring the height up bc (0,0) in top left
 
 # start_button =  Button(x=((swidth//2)-(190/2)), y=(sheight//2), width=190,height=50, text='Start')
