@@ -57,6 +57,18 @@ Battle_UI = {
 
 }
 
+Door_UI = {
+    'Door_1' :
+    'Door_2' :
+    'Door_3' :
+
+
+
+
+
+
+
+}
 
 
 # front_text = Text(x=(swidth//2)-(280//2), y=(sheight//2)-(150), width=280, height=50, text='One way out', font=fantasy_fonts) #doing - numbers to bring the height up bc (0,0) in top left
