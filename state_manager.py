@@ -13,7 +13,7 @@ class State_manager:
 
 
          } # creating map
-        self.current_state = 'battle' # what current screen to display, since theres a bunch rn, which it should turn on when game is booted, stores a key to render(keyholder), will change states
+        self.current_state = 'title' # what current screen to display, since theres a bunch rn, which it should turn on when game is booted, stores a key to render(keyholder), will change states
     def check_state(self,state): # check state for if certain states ex.(battle) have same value, return true/false
         if self.current_state == state: #if aligned with the same title, return True
             return True

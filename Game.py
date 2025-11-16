@@ -23,8 +23,9 @@ class game:
     def render_ui(self):
         self.state_manager.state[self.state_manager.current_state].render(self.screen) #if render diffrent screens, calls render method to use state manager to render the other screen ui's
     # go to staet manager and access state variables within( a map), pick corrent ui to render (has a variable taht tracks the state), uses it to track the correct screen
-        self.HP_SP_UI('player')
-        self.HP_SP_UI('enemy')
+        if self.state_manager.check_state('battle'): #checks if the current state is in battle
+            self.HP_SP_UI('player') # if is in battle, HP, SP of both entities will be displayed
+            self.HP_SP_UI('enemy')
 
 
     def HP_SP_UI(self,unit):
@@ -66,8 +67,8 @@ class game:
             if event.type == pygame.QUIT:
                 self.running = False
             
-            if event.type == pygame.MOUSEBUTTONDOWN: #tells code if clicking down on mouse, do this cmd, left click = mb 1, right click =
-                if event.button == 1:
+            if event.type == pygame.MOUSEBUTTONDOWN: #tells code if clicking down on mouse, do this cmd, left click = mb 1, right click =3, scroll = 2
+                if event.button == 1: 
                     mouse_position = pygame.mouse.get_pos() # pygame figuring out where the mouse is located on window, local variable (lives only here)
 
             # Access the current UI components from the current state
@@ -107,7 +108,7 @@ class game:
                                 print("Back button clicked!")
                                 self.state_manager.switch_state("title")
 
-
+# we gonna add atk, def, etc buttons here later
     def run(self):
 #Starting Game, Front screen
         while self.running == True:
@@ -119,7 +120,7 @@ class game:
 
         # End of Front page
 
-            pygame.display.flip()
+            pygame.display.flip() #Updates the screen, basically the fps
 
 player = Player(HP=200, SP=20, ATK=1.5, DEF=1, GOLD=0, cooldown=3, SKILLCOST=25, Special_dmg=25, Basic_dmg=10)
 enemy = Enemy(HP=100,SP=0,ATK=1.5,DEF=10,GOLD=0,x=(swidth//2),y=(sheight//2-(50)),cooldown=3,SKILLCOST=25, Special_Damage=15, Basic_Dmg= 10)
