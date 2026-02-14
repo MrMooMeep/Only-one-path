@@ -1,19 +1,21 @@
 import pygame
 import sys
-from ui import TextBox, Text, Button
-from Title_and_other_UI import Title_UI, Shop_UI
+from ui import TextBox, Text, Button, ImageButton
+from Title_and_other_UI import Title_UI, Shop_UI, Door_UI
 from shared import sheight, swidth, fantasy_fonts
 from state_manager import State_manager
 from state import State
 from Player_Class import Player
 from Enemy_Class import Enemy
+from Door_Class import Door
+
 
 class game:
     def __init__(self,player,enemy):      
 # Initialize Pygame
         pygame.init()
         self.state_manager = State_manager()
-
+        self.encounter_counter = 0
 
         self.screen = pygame.display.set_mode((swidth,sheight)) # Width & height is a tuple (ordered couple of stuff)
         self.running = True
@@ -26,6 +28,11 @@ class game:
         if self.state_manager.check_state('battle'): #checks if the current state is in battle
             self.HP_SP_UI('player') # if is in battle, HP, SP of both entities will be displayed
             self.HP_SP_UI('enemy')
+             
+        elif self.state_manager.check_state('door'): #checks if the current state is in battle
+            # print('checking door...')
+            for ui in Door_UI.values(): # for loop going through your map[], slight flaw: what if ui component has something not a button, text ex. image
+                ui.draw(self.screen) #draws the image onto the screen from door_UI
 
 
     def HP_SP_UI(self,unit):
@@ -84,12 +91,12 @@ class game:
                     component.handle_event(event)
                 elif hasattr(component, 'update'):  # If you're using update instead
                     component.update(pygame.time.get_ticks())  # or pass `event` if required , if on top of box do this cmd right now, needs click requirment
-                    print(f"Clicked on component: {component_name}")
+                    #print(f"Clicked on component: {component_name}")
                 
                 if hasattr(component, 'rect') and component.rect.collidepoint(mouse_position):
                     if event.type == pygame.MOUSEBUTTONDOWN: #tells code if clicking down on mouse, do this cmd, left click = mb 1, right click =
                         if event.button == 1: #The click cmd, click requirement 
-                            print(f"Clicked on component: {component_name}")
+                            #print(f"Clicked on component: {component_name}")
                     
                             # Handle specific button clicks based on component name
                             if component_name == 'shop':  # This matches your Title_UI['shop'] key
@@ -98,12 +105,37 @@ class game:
                             
                             elif component_name == 'start':  # This matches your Title_UI['start'] key
                                 print("Start button clicked!")
-                                
+                                self.state_manager.switch_state("door")
                             
                             elif component_name == 'exit':  # This matches your Title_UI['exit'] key
                                 print("Exit button clicked!")
                                 self.running = False
                             
+                            elif component_name == 'Door_1' or component_name == 'Door_2' or component_name == 'Door_3':  # This matches your TDoor_UI['Door_1'] key
+                                print("Door button clicked!")
+                                door_rand = Door(encounter=self.encounter_counter,playerhp=self.player.MAX_HP)# the 'holder' of the door class, takes in the encounter count and the player's MAX HP
+                                
+                                door_type,outcome = door_rand.generate_outcome() # python can return 2 or more values, but others can only return 1, sets the outcome values for the 2 values
+                                if door_type == 3: # door_type is a number 1= enemy battle, 2= gold, 3= heal
+                                    self.player.HP = min(self.player.MAX_HP,self.player.HP+outcome) # takes the smallest value to convert to player hp to prevent overheal, if max = 100 and hp = 250, takes max hp for hp
+                                    print('A spot to rest')
+
+                                elif door_type == 2: # door_type is a number 1= enemy battle, 2= gold, 3= heal
+                                    self.player.GOLD += outcome
+                                    print('gained GOLD')
+
+                                if door_type == 1: # door_type is a number 1= enemy battle, 2= gold, 3= heal
+                                    self.enemy = outcome #stores the enemy's new stats affected by encounter count
+                                    self.state_manager.switch_state("battle")
+                                    print('You find a enemy')
+
+                                self.encounter_counter += 1
+                                print(f'encounter counter is now at: {self.encounter_counter}')
+
+
+
+                                
+
                             if component_name == 'back':  # This matches your Title_UI['shop'] key
                                 print("Back button clicked!")
                                 self.state_manager.switch_state("title")

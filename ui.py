@@ -377,3 +377,64 @@ def create_simple_icon(width, height, color, shape="circle"):
             (0, height//3),  # Left top
         ])
     return surface
+class ImageButton:
+    def __init__(self, x, y, width, height, image,
+                 action=None,
+                 color=(20, 20, 40),
+                 hover_color=(40, 40, 80),
+                 click_color=(60, 60, 100),
+                 border_color=(125, 125, 125),
+                 scale_image=True):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.action = action
+
+        self.color = color
+        self.hover_color = hover_color
+        self.click_color = click_color
+        self.border_color = border_color
+
+        self.is_hovered = False
+        self.is_clicked = False
+        self.border_radius = 0 #removal of the curve
+
+        # Handle image
+        self.original_image = image
+        if scale_image:
+            self.image = pygame.transform.smoothscale(image, (width - 10, height - 10))
+        else:
+            self.image = image
+
+        self.image_rect = self.image.get_rect(center=self.rect.center)
+
+    def update(self, mouse_pos):
+        self.is_hovered = self.rect.collidepoint(mouse_pos)
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.is_hovered:
+                self.is_clicked = True
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if self.is_clicked and self.is_hovered:
+                if self.action:
+                    self.action()
+            self.is_clicked = False
+
+    def draw(self, surface):
+        # Choose background color
+        if self.is_clicked:
+            bg_color = self.click_color
+        elif self.is_hovered:
+            bg_color = self.hover_color
+        else:
+            bg_color = self.color
+
+        # Draw background
+        pygame.draw.rect(surface, bg_color, self.rect, border_radius=self.border_radius)
+
+        # Draw border
+        pygame.draw.rect(surface, self.border_color, self.rect, 2, border_radius=self.border_radius)
+
+        # Draw image
+        surface.blit(self.image, self.image_rect)
+
