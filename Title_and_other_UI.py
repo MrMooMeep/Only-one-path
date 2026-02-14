@@ -1,9 +1,9 @@
-from ui import Text, Button, TextBox
+from ui import Text, Button, TextBox, ImageButton
 import pygame
 from shared import sheight, swidth, fantasy_fonts
 from Upgrade_glow import UpgradeIndicator
 
-
+pygame.init()
 
 #Using Maps to make it easier to collect lines of codes for specific events easily, much faster than an array, basically uses a (ctrl=F) cmd and finds the code immediatly
 
@@ -56,11 +56,11 @@ Battle_UI = {
     # 'item_button' :
 
 }
-
+door_img = pygame.image.load("./sprites/door/door2.png")
 Door_UI = {
-    'Door_1' :
-    'Door_2' :
-    'Door_3' :
+    'Door_1' :ImageButton(x= (swidth//2)-350 , y=(sheight//2)-275, width=200, height=400, image=door_img),
+    'Door_2' :ImageButton(x= (swidth//2)-100 , y=(sheight//2)-275, width=200, height=400, image=door_img),
+    'Door_3' :ImageButton(x= (swidth//2)+150 , y=(sheight//2)-275, width=200, height=400, image=door_img),
 
 
 

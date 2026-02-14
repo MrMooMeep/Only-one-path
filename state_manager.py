@@ -1,5 +1,5 @@
 from state import State
-from Title_and_other_UI import Title_UI, Shop_UI, Battle_UI
+from Title_and_other_UI import Title_UI, Shop_UI, Battle_UI, Door_UI
 
 class State_manager:
     def __init__(self):
@@ -7,7 +7,7 @@ class State_manager:
             'title' : State(Title_UI), # Title State
             'shop' : State(Shop_UI), # Shop State
             'battle' : State(Battle_UI), # Battle State 
-            # 'path' : State(Path_UI) #Path State, shows where you wanna go next
+            'door' : State(Door_UI), #Path State, shows where you wanna go next
 
 
 
