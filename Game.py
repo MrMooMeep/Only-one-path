@@ -8,6 +8,7 @@ from state import State
 from Player_Class import Player
 from Enemy_Class import Enemy
 from Door_Class import Door
+from Battlemode import Battle
 
 
 class game:
@@ -16,11 +17,13 @@ class game:
         pygame.init()
         self.state_manager = State_manager()
         self.encounter_counter = 0
-
+        
         self.screen = pygame.display.set_mode((swidth,sheight)) # Width & height is a tuple (ordered couple of stuff)
         self.running = True
+        
         self.player = player
         self.enemy = enemy
+        self.battle = Battle(self.player,self.enemy)
 
     def render_ui(self):
         self.state_manager.state[self.state_manager.current_state].render(self.screen) #if render diffrent screens, calls render method to use state manager to render the other screen ui's
@@ -57,14 +60,15 @@ class game:
             sp_color = (0,50,255) if sp_ratio > .5 else (255,127,80)
 
             pygame.draw.rect(self.screen, sp_color,(SP_bar_position[0],SP_bar_position[1],bar_width*sp_ratio,bar_height))
-        elif unit == 'enemy':
+        elif unit == 'enemy' :
             unit_bar_width = 100
             unit_bar_height = 10
 
             unit_HP_position = ((self.enemy.x-(50)),(self.enemy.y-(150)))
             pygame.draw.rect(self.screen,(100,100,100),(unit_HP_position[0],unit_HP_position[1],unit_bar_width,unit_bar_height))
             # where its going, what the background color, where its gonna go ([x],[y] is 0, 1 bc it starts at 0 first), (width,height)
-            unit_hp_ratio = self.enemy.HP/self.enemy.MAX_HP
+            enemy_HP = max(int(self.enemy.HP),0)
+            unit_hp_ratio = enemy_HP/self.enemy.MAX_HP
             unit_hp_color = (0,255,0) if unit_hp_ratio > .5 else (255,0,0)
             pygame.draw.rect(self.screen, unit_hp_color, (unit_HP_position[0],unit_HP_position[1],unit_bar_width*unit_hp_ratio,unit_bar_height))
 
@@ -132,7 +136,28 @@ class game:
                                 self.encounter_counter += 1
                                 print(f'encounter counter is now at: {self.encounter_counter}')
 
+                            elif component_name == 'atk_button':
+                                print('atk_button clicked')
+                                
+                                self.enemy.HP = self.battle.Turn_player("Basic")
+                                print(f"game enemy has {self.enemy.HP}") #checking if the HP is a deep copy or a shallow, It was a Deep copy, we need the Shallow copy
+                                # print(f"Game turn {self.turn}")
+                                # self.player.HP = self.battle.Turn_enemy()
 
+                            elif component_name == 'special_button':
+                                print('special_button clicked')
+                                self.enemy.HP = self.battle.Turn_player("Special") # setting the HP that was returned to the game player and enemy HP depending on who attacked
+                                print(f"game enemy has {self.enemy.HP}")
+                                # self.player.HP = self.battle.Turn_enemy()
+                                # print(f"Game turn {self.turn}")
+
+                            elif component_name == 'def_button':    
+                                print('def_button clicked')    
+                                
+                                self.player.HP = self.battle.Turn_player("Guard")
+                                print(f"game player has {self.player.HP}")
+                                # self.player.HP = self.battle.Turn_enemy()
+                                # print(f"Game turn {self.turn}")
 
                                 
 
@@ -151,6 +176,23 @@ class game:
             self.render_ui()
 
         # End of Front page
+            if self.state_manager.check_state('battle'):
+                result = self.battle.is_battle_over()
+                print(result)
+                if result == False:
+                    self.battle.Turn_enemy()
+                if result == True and self.player.HP > 0:
+                    self.state_manager.switch_state = 'door'
+                    
+                elif result == True and self.player.HP <= 0:
+                    self.state_manager.switch_state = 'title'
+                    self.player.HP = self.player.MAX_HP
+                    self.enemy.HP = self.enemy.MAX_HP
+
+                
+                
+
+
 
             pygame.display.flip() #Updates the screen, basically the fps
 

@@ -44,13 +44,16 @@ Shop_UI["atk"] = atk_button #reimplement atk
 Shop_UI["def"] = def_button
 
 button_x = (swidth//2)-(850/2)
-
+enemy_img = pygame.image.load("./sprites/enemies/enemyedd.png")
 Battle_UI = {
+
     'background_fill' : TextBox(x=0, y=(sheight)-(250), width=swidth, height=250, borderColor=(43, 44, 58, 160)),
     'dialogue_text' : TextBox(x=(swidth//2)-(10), y=(sheight)-(235), width=600, height=220, borderColor=(43, 44, 58, 160)),
     'atk_button' : Button(x=(button_x), y=(sheight//2)+(225), width=250,height=50, text='Attack', action=""),
     'special_button' : Button(x=(button_x), y=(sheight//2)+(295), width=250,height=50, text='Special', action=""),
-    'def_button' : Button(x=(button_x), y=(sheight//2)+(365), width=250,height=50, text='Defend', action="")
+    'def_button' : Button(x=(button_x), y=(sheight//2)+(365), width=250,height=50, text='Defend', action=""),
+    'enemy_clicker' : ImageButton(x=(swidth//2)-75,y=(sheight//2-(425)),width = 150, height = 200, image =enemy_img)
+    
     
     
     # 'item_button' :

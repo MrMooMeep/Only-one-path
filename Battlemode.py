@@ -4,7 +4,7 @@ from Player_Class import Player
 from Enemy_Class import Enemy
 
 class Battle:
-    def __init__(self,Player,Enemy,Turn):
+    def __init__(self,Player,Enemy,Turn=0):
         self.player = Player
         self.enemy = Enemy
         self.win = False #if player wins the encounter
@@ -12,6 +12,7 @@ class Battle:
         self.battle_over = False #if player loses the game
     
     def Turn_player(self,attack_type): #attack_type is a string
+        print(f"\n This is Player's Turn")
         if self.turn == 0: # == compares, = converts value to the once current
             print("Player's Turn.")
             if attack_type == "Basic":
@@ -27,14 +28,18 @@ class Battle:
 
             else:
                 print("Player tries to use special but can't")
-                return # breaks out of turn player skips line 24-25, allows them to pick another option
+                return self.enemy.HP # breaks out of turn player skips line 24-25, allows them to pick another option
             self.enemy.damage_intake(dmg)   #call Enemy_class on what dmg is taken, reduce the enemy's HP
-            self.turn += 1 # adds 1 to turn counter
+            self.turn = 1 # adds 1 to turn counter
+        print(f"battle enemy has {self.enemy.HP}")
+        print(f"battle turn {self.turn}")
+        return int(self.enemy.HP)
     
     def Turn_enemy(self):
+        print(f"\n This is Enemy's Turn")
         if self.turn == 1:
             print("Enemy's Turn")
-            if self.enemy.HP < int(self.enemy.MAX_HP*.99): # random generates a random number from 0 to 1, MAX HP conditional
+            if self.enemy.HP < int(self.enemy.MAX_HP*.25): # random generates a random number from 0 to 1, MAX HP conditional
                 dmg = 0
                 self.enemy.use_guard() #may infinitely guard when below 50% hp, 
                 print("Enemy guards")
@@ -45,7 +50,11 @@ class Battle:
                 dmg = self.enemy.use_basic_atk()
                 print("Enemy uses their basic and dealt", dmg ,"damage")
             self.player.damage_intake(dmg) # dmg is input into the parenthesis so the player gets this value and takes dmg accordingly 
-            self.turn -=1 # minus 1 from turn counter
+            self.turn = 0 # minus 1 from turn counter
+        print(f"battle player has {self.player.HP}")
+        print(f"battle turn {self.turn}")
+        return int(self.player.HP)
+        
     
     def Victory(self):
         if self.enemy.HP <= 0:
